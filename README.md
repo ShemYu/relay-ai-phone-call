@@ -2,6 +2,8 @@
 
 A local service for giving an AI a phone number, a goal, context, and boundaries, then explicitly asking it to place one call. Speech uses **`gpt-live-1`**. A separate Responses backend (`gpt-5.6-terra` by default) reasons over the brief and records the result. Twilio makes the outbound telephone call.
 
+For the system diagram, call sequence, module responsibilities, and browser audio paths, see [Architecture](docs/architecture.md).
+
 ## Run locally
 
 Requires Node.js 22.6 or newer.

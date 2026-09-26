@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f5ef" />
+    <title>Relay · Personal call assistant</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" type="module"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="Relay home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>relay<span class="brand-divider"></span><span class="brand-description">Personal call assistant</span></a>
+        <div class="header-meta"><span class="model-badge">gpt-live-1</span><span class="personal-badge"><span></span> Your workspace</span></div>
+      </header>
+
+      <main>
+        <section class="page-heading" aria-labelledby="page-title">
+          <div><p class="eyebrow">A LITTLE HELP ON THE LINE</p><h1 id="page-title">Your goal. A conversation away.</h1><p class="heading-description">Give your assistant the context. Review the brief. Let it make the call. <a class="model-badge" href="/local-test.html">Test voice locally</a></p></div>
+          <div class="connection-status" id="connection-status" role="status"><span class="status-dot"></span><span id="connection-label">Checking connection</span></div>
+        </section>
+
+        <details class="setup-panel" id="setup-panel">
+          <summary><span class="setup-icon" aria-hidden="true">↗</span><span><strong id="setup-title">Checking your setup</strong><span id="setup-description">You can start preparing a call while we check the connection.</span></span><span class="summary-action">Connection settings <span aria-hidden="true">⌄</span></span></summary>
+          <div class="setup-content">
+            <ul id="setup-checks" class="setup-checks"></ul>
+            <p>Credentials stay on the server in this project’s <code>.env.local</code> file. A public HTTPS address is needed for call webhooks.</p>
+            <form id="settings-form" class="settings-form" autocomplete="off" aria-labelledby="settings-title">
+              <div class="settings-heading"><h3 id="settings-title">Connection settings</h3><p>Connect your Twilio account and the public callback address.</p></div>
+              <div class="settings-grid">
+                <div class="field"><label for="settings-account-sid">Twilio account SID</label><input id="settings-account-sid" name="accountSid" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="34" placeholder="AC…" aria-describedby="settings-account-hint" /><p class="field-hint" id="settings-account-hint">Find this in your Twilio account dashboard.</p></div>
+                <div class="field"><label for="settings-auth-token">Twilio auth token <span id="settings-token-state">not loaded</span></label><input id="settings-auth-token" name="authToken" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="256" placeholder="Paste a token to add or replace it" aria-describedby="settings-token-hint" /><p class="field-hint" id="settings-token-hint">Leave blank to keep the token already saved on the server.</p></div>
+                <div class="field"><label for="settings-from-number">Twilio caller number</label><input id="settings-from-number" name="fromNumber" type="tel" autocomplete="off" maxlength="24" placeholder="+1 202 555 0100" aria-describedby="settings-number-hint" /><p class="field-hint" id="settings-number-hint">Your Twilio number, including its country code.</p></div>
+                <div class="field"><label for="settings-public-url">Public HTTPS callback URL</label><input id="settings-public-url" name="publicBaseUrl" type="url" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="2048" placeholder="https://your-tunnel.example" aria-describedby="settings-url-hint" /><p class="field-hint" id="settings-url-hint">The public address forwarding to the call webhook server.</p></div>
+              </div>
+              <p id="settings-error" class="settings-feedback settings-error" role="alert" hidden></p>
+              <div class="settings-footer"><p id="settings-message" class="settings-feedback" role="status">Loading connection settings…</p><button id="save-settings-button" class="button button-secondary" type="submit" disabled>Save settings</button></div>
+            </form>
+          </div>
+        </details>
+
+        <div class="workspace-grid">
+          <section class="brief-panel card" aria-labelledby="brief-title">
+            <div class="card-heading"><div><p class="eyebrow">MAKE ROOM FOR THE REST OF YOUR DAY</p><h2 id="brief-title">Start with the brief</h2></div><span class="step-count" id="step-count">01 / 03</span></div>
+            <ol class="steps" aria-label="Call preparation progress"><li class="current" id="step-brief" aria-current="step"><span>1</span>Brief</li><li id="step-review"><span>2</span>Review</li><li id="step-call"><span>3</span>Call</li></ol>
+            <div class="error-banner" id="form-error" role="alert" hidden></div>
+
+            <form id="brief-form">
+              <fieldset><legend><span class="section-number">01</span> Who are we calling?</legend>
+                <div class="form-grid"><div class="field"><label for="recipient-name">Person or business <span>required</span></label><input id="recipient-name" name="recipientName" autocomplete="off" maxlength="100" placeholder="e.g. A restaurant, a hotel, Alex…" required /></div><div class="field"><label for="phone-number">Phone number <span>required</span></label><input id="phone-number" name="phoneNumber" type="tel" autocomplete="tel" placeholder="+81 3 1234 5678" aria-describedby="phone-hint" required /><p class="field-hint" id="phone-hint">Include the country code. We’ll remove spaces.</p></div></div>
+                <div class="form-grid"><div class="field"><label for="caller-name">Your name <span>required</span></label><input id="caller-name" name="callerName" autocomplete="name" maxlength="100" placeholder="Who should the assistant represent?" required /></div><div class="field"><label for="language">Conversation language</label><input id="language" name="language" value="Japanese" list="languages" maxlength="60" required /><datalist id="languages"><option value="Japanese"></option><option value="English"></option><option value="Mandarin Chinese (Taiwan)"></option><option value="Traditional Chinese"></option><option value="Mandarin Chinese"></option><option value="Korean"></option><option value="Spanish"></option><option value="French"></option></datalist></div></div>
+                <div class="form-grid"><div class="field"><label for="voice">Assistant voice</label><select id="voice" name="voice"><option value="marin" selected>Marin</option><option value="gleam">Gleam · feminine</option><option value="willow">Willow</option><option value="quartz">Quartz</option></select><p class="field-hint">Describe the tone and speaking style in your instructions.</p></div><details class="opening-options" id="opening-options"><summary>Customize first words <span>optional</span></summary><div class="field"><label for="opening-message">First words</label><textarea id="opening-message" name="openingMessage" rows="2" maxlength="500" aria-describedby="opening-hint" placeholder="The first words the assistant should say…"></textarea><p class="field-hint" id="opening-hint">Leave blank for a simple greeting in the selected language. The assistant continues with your goal after the reply.</p></div></details></div>
+              </fieldset>
+              <fieldset><legend><span class="section-number">02</span> What would you like to get done?</legend>
+                <div class="field"><label for="goal">The goal <span>required</span></label><textarea id="goal" name="goal" rows="2" minlength="5" maxlength="2000" placeholder="e.g. Ask if there’s a table for two at 7 pm this Friday." required></textarea><p class="field-hint">Describe the result you want, as specifically as you can.</p></div>
+                <div class="field"><label for="context">Context the assistant may share <span>optional</span></label><textarea id="context" name="context" rows="3" maxlength="10000" aria-describedby="context-hint" placeholder="Names, dates, reference numbers, preferences, or anything the other person might ask…"></textarea><p class="field-hint" id="context-hint">Include only information the assistant may share with the person you call.</p></div>
+              </fieldset>
+              <fieldset class="last-fieldset"><legend><span class="section-number">03</span> Set the boundaries</legend>
+                <div class="field"><label for="constraints">Limits &amp; instructions <span>optional</span></label><textarea id="constraints" name="constraints" rows="2" maxlength="4000" placeholder="e.g. Only accept outdoor seating. Don’t agree to a deposit. Ask me to follow up if Friday is full."></textarea></div>
+                <div class="duration-row"><div><label for="duration">Maximum call length</label><p class="field-hint" id="duration-hint">Relay disconnects at a selected limit. Provider limits still apply when no limit is selected.</p></div><select id="duration" name="maxDurationSeconds" aria-describedby="duration-hint"><option value="60">1 minute</option><option value="120">2 minutes</option><option value="180">3 minutes</option><option value="300" selected>5 minutes</option><option value="600">10 minutes</option><option value="none">No time limit</option></select></div>
+              </fieldset>
+              <div class="disclosure"><span aria-hidden="true">✳</span><p>Your assistant follows your brief and chosen opening, and respects the other person’s choice to continue.</p></div>
+              <div class="form-footer"><span>No call is placed until you review.</span><button class="button button-primary" id="review-button" type="submit">Review call brief <span aria-hidden="true">→</span></button></div>
+            </form>
+
+            <section id="review-panel" class="review-panel" aria-labelledby="review-title" hidden tabindex="-1">
+              <div class="review-intro"><span class="review-icon" aria-hidden="true">✓</span><div><h3 id="review-title">One last look before the call</h3><p>Check the details and what your assistant will say.</p></div></div>
+              <dl id="review-details" class="review-details"></dl>
+              <div class="opening-preview"><p class="eyebrow">Greeting</p><blockquote id="opening-line"></blockquote><p>After the reply, the assistant continues naturally with your goal.</p></div>
+              <p class="call-readiness" id="call-readiness"></p>
+              <div class="form-footer review-footer"><button type="button" class="button button-secondary" id="edit-button"><span aria-hidden="true">←</span> Edit brief</button><button type="button" class="button button-primary" id="place-call-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.6 3H4.5C3.7 3 3 3.7 3 4.5 3 13.6 10.4 21 19.5 21c.8 0 1.5-.7 1.5-1.5v-3.1l-4.4-1.9-1.8 2.1a15.6 15.6 0 0 1-7.4-7.4l2.1-1.8L7.6 3Z"/></svg>Place call</button></div>
+            </section>
+          </section>
+
+          <aside class="activity-column">
+            <section class="activity-panel card" aria-labelledby="activity-title"><div class="activity-header"><div><p class="eyebrow">ON THE LINE</p><h2 id="activity-title">Call activity</h2></div><span class="live-indicator" id="live-indicator" hidden><i></i> Live</span></div>
+              <div id="activity-empty" class="activity-empty"><div class="phone-illustration" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="phone-circle"><svg viewBox="0 0 24 24"><path d="M7.6 3H4.5C3.7 3 3 3.7 3 4.5 3 13.6 10.4 21 19.5 21c.8 0 1.5-.7 1.5-1.5v-3.1l-4.4-1.9-1.8 2.1a15.6 15.6 0 0 1-7.4-7.4l2.1-1.8L7.6 3Z"/></svg></div><span class="orbit-spark">✳</span></div><h3>A little quiet, for now.</h3><p>When you place a call, follow the conversation and see the result here.</p><span class="empty-caption">Your next conversation starts with a brief.</span></div>
+              <div id="call-content" hidden><div class="call-identity"><h3 id="call-recipient"></h3><p id="call-number"></p><div class="call-meta"><span class="call-status" id="call-status"></span><span id="call-duration"></span></div></div><div id="call-error" class="error-banner" role="alert" hidden></div>
+                <section id="call-monitor" class="call-monitor" aria-labelledby="call-monitor-title">
+                  <h4 id="call-monitor-title">Listen to this call</h4>
+                  <div class="monitor-buttons"><button class="button button-secondary" type="button" data-monitor-listen disabled>Listen</button><button class="button button-secondary" type="button" data-monitor-stop hidden>Stop listening</button><button class="button button-secondary monitor-mute" type="button" data-monitor-mute aria-pressed="false" disabled>Mute</button></div>
+                  <div class="monitor-volume"><label for="call-monitor-volume">Listening volume</label><input id="call-monitor-volume" data-monitor-volume type="range" min="0" max="100" step="5" value="80" /><output for="call-monitor-volume" data-monitor-volume-value>80%</output></div>
+                  <p class="monitor-status" data-monitor-status role="status">Select an active call to listen.</p>
+                  <p class="monitor-note">Approximate live preview of both sides. Assistant audio is copied before the carrier plays it. Listening uses no microphone; stopping it leaves the call running.</p>
+                </section>
+                <div class="transcript-section"><h4>Conversation <span id="transcript-count"></span></h4><div class="transcript" id="transcript" role="log" aria-label="Call transcript" aria-live="polite"><p class="empty-transcript">The transcript will appear when the conversation begins.</p></div></div><div id="outcome" class="outcome" hidden></div><details class="events-panel"><summary>Call events</summary><ul id="call-events"></ul></details><button class="button button-stop" id="stop-call-button" type="button" hidden><span aria-hidden="true">■</span> End call</button></div>
+            </section>
+            <section class="history-panel card" aria-labelledby="history-title"><div class="history-heading"><h2 id="history-title">Recent calls</h2><span id="history-count">0</span></div><div id="call-history"><div class="history-empty"><span aria-hidden="true">↗</span><p>Your calls will appear here.<br /><span>Every brief, conversation, and outcome.</span></p></div></div></section>
+            <p class="sidebar-note"><span aria-hidden="true">◇</span> A clear goal helps. A little context helps even more.</p>
+          </aside>
+        </div>
+        <footer class="site-footer"><span>relay <span class="footer-dot">·</span> A personal assistant, one call at a time.</span><span>Voice by OpenAI <span class="footer-dot">/</span> Calls by Twilio</span></footer>
+      </main>
+    </div>
+  </body>
+</html>

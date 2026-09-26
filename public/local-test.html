@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f6f5ef" />
+    <title>Relay · Local voice test</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/local-test.css" />
+    <script src="/local-test.js" type="module"></script>
+  </head>
+  <body>
+    <div class="app-shell voice-shell">
+      <header class="site-header">
+        <a class="brand" href="/" aria-label="Relay dashboard"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>relay<span class="brand-divider"></span><span class="brand-description">Local voice test</span></a>
+        <div class="header-meta"><span class="model-badge" id="voice-model">gpt-live-1</span><a class="back-link" href="/">← Back to calls</a></div>
+      </header>
+      <main>
+        <section class="page-heading" aria-labelledby="voice-title">
+          <div><p class="eyebrow">A CONVERSATION, BEFORE THE CALL</p><h1 id="voice-title">Hear it here first.</h1><p class="heading-description">Talk to the same assistant through your microphone. Play the recipient and try the conversation yourself.</p></div>
+          <span class="test-badge">Browser voice test</span>
+        </section>
+        <div class="test-notice"><span aria-hidden="true">◎</span><p><strong>No phone call. No Twilio.</strong> Starting a voice test sends your microphone audio and brief to OpenAI. OpenAI usage applies.</p></div>
+        <p id="page-error" class="voice-error" role="alert" hidden></p>
+        <div class="voice-grid">
+          <section class="card conversation-card" aria-labelledby="conversation-title">
+            <div class="voice-card-heading"><div><p class="eyebrow">DIRECT BROWSER AUDIO</p><h2 id="conversation-title">Try the conversation</h2></div><span class="model-badge" id="voice-name">marin</span></div>
+            <div class="session-stage" id="session-stage" data-state="idle">
+              <div class="voice-orb" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+              <h3 id="session-status" role="status">Getting things ready</h3>
+              <p id="session-detail">Checking the local voice-test configuration.</p>
+              <div class="session-labels"><span id="microphone-status">Microphone off</span><span id="session-elapsed">0:00</span></div>
+            </div>
+            <div class="session-controls"><button class="button button-primary" id="start-test" type="submit" form="test-brief" disabled>Start voice test</button><button class="button button-secondary" id="mute-test" type="button" disabled>Mute microphone</button><button class="button button-stop" id="end-test" type="button" disabled>End test</button></div>
+            <div class="audio-output"><label for="assistant-audio">Assistant audio</label><audio id="assistant-audio" controls autoplay playsinline></audio><p id="playback-hint" class="field-hint">The assistant’s voice will play here after you start.</p><button id="play-assistant" class="button button-secondary" type="button" hidden>Play assistant audio</button></div>
+            <div class="voice-transcript-heading"><h3>Conversation transcript</h3><button id="download-log" class="text-button" type="button" disabled>Download test log</button></div>
+            <p class="transcript-caption">Fragments appear in arrival order. Transcripts may contain mistakes.</p>
+            <div id="voice-transcript" class="voice-transcript" role="log" aria-live="polite" aria-label="Voice test transcript"><p class="voice-empty">Your conversation will appear here. Nothing starts until you press Start voice test.</p></div>
+            <section id="test-outcome" class="test-outcome" aria-label="Model-reported test outcome" hidden></section>
+            <p id="usage-status" class="usage-status">No OpenAI session has been started on this page.</p>
+          </section>
+          <aside class="voice-sidebar">
+            <details class="card test-brief-panel" open>
+              <summary><span><span class="eyebrow">THE SAME CALL BRIEF</span><strong>Conversation setup</strong></span><span aria-hidden="true">⌄</span></summary>
+              <form id="test-brief"><fieldset id="brief-fields" disabled>
+                <input type="hidden" name="phoneNumber" id="test-phone" />
+                <div class="field"><label for="test-recipient">Recipient you will play</label><input id="test-recipient" name="recipientName" maxlength="100" autocomplete="off" required /></div>
+                <div class="field"><label for="test-caller">Calling on behalf of</label><input id="test-caller" name="callerName" maxlength="100" autocomplete="off" required /></div>
+                <div class="field"><label for="test-language">Conversation language</label><input id="test-language" name="language" list="test-languages" maxlength="60" required /><datalist id="test-languages"><option value="Japanese"></option><option value="English"></option><option value="Mandarin Chinese (Taiwan)"></option></datalist></div>
+                <div class="field"><label for="test-voice">Assistant voice</label><select id="test-voice" name="voice"><option value="marin">Marin</option><option value="gleam">Gleam · feminine</option><option value="willow">Willow</option><option value="quartz">Quartz</option></select><p class="field-hint">Describe the tone and speaking style in your instructions.</p></div>
+                <details class="opening-options" id="test-opening-options"><summary>Customize first words <span>optional</span></summary><div class="field"><label for="test-opening-message">First words</label><textarea id="test-opening-message" name="openingMessage" rows="2" maxlength="500" aria-describedby="test-opening-hint" placeholder="The first words the assistant should say…"></textarea><p class="field-hint" id="test-opening-hint">Leave blank for a simple greeting in the selected language. The assistant continues with your goal after the reply.</p></div></details>
+                <div class="field"><label for="test-goal">Goal</label><textarea id="test-goal" name="goal" rows="3" minlength="5" maxlength="2000" required></textarea></div>
+                <div class="field"><label for="test-context">Context the assistant may share</label><textarea id="test-context" name="context" rows="3" maxlength="10000"></textarea></div>
+                <div class="field"><label for="test-constraints">Limits &amp; instructions</label><textarea id="test-constraints" name="constraints" rows="3" maxlength="4000"></textarea></div>
+                <div class="field"><label for="test-duration">Relay time limit</label><select id="test-duration" name="maxDurationSeconds"><option value="60">1 minute</option><option value="120">2 minutes</option><option value="180">3 minutes</option><option value="300">5 minutes</option><option value="600">10 minutes</option><option value="none">No Relay time limit</option></select><p class="field-hint">Provider limits still apply. End the test when you are finished.</p></div>
+              </fieldset><p class="brief-explanation">This test uses the phone assistant’s existing instructions. Editing the brief here affects this test only.</p></form>
+            </details>
+            <section class="card diagnostics-card" aria-labelledby="diagnostics-title"><p class="eyebrow">WHAT THE BROWSER OBSERVES</p><h2 id="diagnostics-title">Connection diagnostics</h2><dl class="stats-grid"><div><dt>Round-trip time</dt><dd id="stat-rtt">—</dd></div><div><dt>Incoming jitter</dt><dd id="stat-jitter">—</dd></div><div><dt>Incoming packet loss</dt><dd id="stat-loss">—</dd></div><div><dt>Peer connection</dt><dd id="stat-peer">Not started</dd></div></dl><p id="stats-note">Live transport measurements, when available. Packet loss is measured between samples. These values alone cannot identify a Wi-Fi, ISP, device, or model problem.</p><details class="voice-events"><summary>Session events</summary><ol id="test-events"><li>No session events yet.</li></ol></details></section>
+            <details class="card mic-check-card"><summary><span><span class="eyebrow">CHECK YOUR INPUT FIRST</span><strong>Offline microphone check</strong></span><span aria-hidden="true">⌄</span></summary><div class="mic-check-body"><p>Record up to five seconds, then listen back. This recording stays in this browser tab and is never uploaded.</p><div class="mic-check-controls"><button id="record-mic" class="button button-secondary" type="button">Record 5-second check</button><button id="stop-recording" class="button button-secondary" type="button" disabled>Stop</button></div><p id="mic-check-status" role="status">Microphone off. No network session is used.</p><audio id="mic-playback" controls hidden></audio><button id="clear-recording" class="text-button" type="button" hidden>Clear recording</button></div></details>
+          </aside>
+        </div>
+        <footer class="site-footer"><span>relay <span class="footer-dot">·</span> A test conversation, on your terms.</span><span>Browser microphone → OpenAI · No telephone connection</span></footer>
+      </main>
+    </div>
+  </body>
+</html>

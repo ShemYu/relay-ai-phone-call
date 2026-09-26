@@ -1,0 +1,24 @@
+{
+  "name": "ai-phone-call",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal outbound calling with GPT-Live 1 and Twilio",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test test/*.test.js",
+    "check": "node --check src/server.js && node --check src/local-test.js && node --check src/call-monitor.js && node --check public/app.js && node --check public/call-monitor.js && node --check public/local-test.js && node --check public/local-test-protocol.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "twilio": "^5.10.0",
+    "ws": "^8.18.3",
+    "zod": "^4.1.12"
+  },
+  "license": "MIT"
+}
